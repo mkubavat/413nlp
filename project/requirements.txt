@@ -1,0 +1,12 @@
+pip
+numpy
+pandas
+seaborn
+wordcloud
+scikit-learn
+nltk
+tensorflow~=2.14.0
+keras~=2.14.0
+torch
+transformers
+ipywidgets
