@@ -1,0 +1,52 @@
+  """
+     spellchk(fh):
+    for (locations, sent) in get_typo_locations(fh):
+        spellchk_sent = sent
+        for i in locations:
+            # predict top_k replacements only for the typo word at index i
+            predict = fill_mask(
+                " ".join([ sent[j] if j != i else mask for j in range(len(sent)) ]), 
+                top_k=35 #second change
+            )
+            logging.info(predict)
+            spellchk_sent[i] = select_correction(sent[i], predict)
+        yield(locations, spellchk_sent)
+     """
+    
+     #third chanage
+     """
+     for (locations, sent) in get_typo_locations(fh):
+        spellchk_sent = sent
+        for i in locations:
+            # predict top_k replacements only for the typo word at index i
+            predict = fill_mask(
+                " ".join([ sent[j] if j != i else mask for j in range(len(sent)) ]), 
+                top_k=35
+            )
+            if i < len(sent):
+                predict+=fill_mask(
+                    " ".join([ sent[:i+1][j] if j != i else mask for j in range(len(sent[:i+1])) ]), 
+                    top_k=35
+                )
+            logging.info(predict)
+            spellchk_sent[i] = select_correction(sent[i], predict)
+        yield(locations, spellchk_sent)
+    """
+     #4th chanage
+     """
+     for (locations, sent) in get_typo_locations(fh):
+        spellchk_sent = sent.copy()
+        for i in sorted(locations):
+            # Generate a sentence with the mask token in place of the typo
+            masked_sentence = " ".join([spellchk_sent[j] if j != i else fill_mask.tokenizer.mask_token for j in range(len(spellchk_sent))])
+
+            # Get predictions for the masked token
+            predict = fill_mask(masked_sentence, top_k=20) #5th is top_k=35
+
+            # Select and apply the best correction
+            correction = select_correction(spellchk_sent[i], predict)
+            spellchk_sent[i] = correction
+            # Optionally re-assess the sentence to ensure the correction fits well
+
+        yield (locations, spellchk_sent)
+    """
